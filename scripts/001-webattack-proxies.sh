@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 apt-get install -y burpsuite zaproxy
 
-for bin in burpsuite zaproxy; do
-	oldbin=`which $bin`
-	newbin="$oldbin.real"
-	mv $oldbin $newbin
-	echo gksudo $newbin > $oldbin
-	chmod +x $oldbin
-done 
+echo "Adding sudo-enabled menu items"
+workdir=$(dirname $0)
+for menudir in /usr/share/applications /usr/share/kali-menu/applications
+do
+	for shortcut in kali-zaproxy kali-burpsuite
+	do
+		shortcut="$shortcut.desktop"
+		if [ -f $menudir/$shortcut ]
+		then
+			rm -f $menudir/$shortcut
+		fi
+
+		cp -v "$workdir/../support/$shortcut" $menudir/$shortcut
+	done
+done
